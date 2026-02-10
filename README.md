@@ -36,3 +36,10 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 ```bash
 docker build -t app-k8s-local:1.0 .
 ```
+### 6.- Probar la imagen localmente
+
+```bash
+docker run -p 8080:8080 app-k8s-local:1.0
+```
+
+
