@@ -1,6 +1,6 @@
 # Introducción a Kubernate
 
-### 0.- Activar Kubernetes en Docker Desktop
+### 1.- Activar Kubernetes en Docker Desktop
 
 <img src="images/k8s_enable_local.png" />
 
@@ -10,17 +10,17 @@
 kubectl cluster-info
 ```
 
-### 1.- Tener una aplicación básica
+### 2.- Tener una aplicación básica
 
 <img src="images/k8s_basic_app.png" />
 
-### 2.- Compilar la app generando el archivo .jar
+### 3.- Compilar la app generando el archivo .jar
 
 ```bash
 mvn  clean package -DskipTests
 ```
 
-### 3.- Crear el archivo Dockerfile
+### 4.- Crear el archivo Dockerfile
 
 ```dockerfile
 # Dockerfile
@@ -29,4 +29,10 @@ WORKDIR /app
 COPY target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+### 5.- Construir la imagen Docker
+
+```bash
+docker build -t app-k8s-local:1.0 .
 ```
