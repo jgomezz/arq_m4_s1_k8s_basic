@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment  # Tipo de recurso: Deployment
+metadata:
+  name: app-k8s
+spec:
+  replicas: 1                     # Solo 1 pod por ahora
+  selector:
+    matchLabels:
+      app: app-k8s
+  template:
+    metadata:
+      labels:
+        app: app-k8s
+    spec:
+      containers:
+        - name: app-k8s
+          image: app-k8s-local:1.0
+          imagePullPolicy: Never     # Usar imagen local
+          ports:
+            - containerPort: 8080

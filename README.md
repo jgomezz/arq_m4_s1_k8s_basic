@@ -41,5 +41,33 @@ docker build -t app-k8s-local:1.0 .
 ```bash
 docker run -p 8080:8080 app-k8s-local:1.0
 ```
+- Probar en el navegador: http://localhost:8080
 
 
+## KUBERNETES
+
+### 7.- Desplegar un POD en Kubernetes
+- Crear el archivo de configuración del POD ( k8s/deployment-v1.yaml)
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment  # Tipo de recurso: Deployment 
+metadata:
+  name: app-k8s
+spec:
+  replicas: 1                     # Solo 1 pod por ahora
+  selector:
+    matchLabels:
+      app: app-k8s
+  template:
+    metadata:
+      labels:
+        app: app-k8s
+    spec:
+      containers:
+        - name: app-k8s
+          image: app-k8s-local:1.0
+          imagePullPolicy: Never     # Usar imagen local
+          ports:
+            - containerPort: 8080
+```
