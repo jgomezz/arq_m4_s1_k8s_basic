@@ -299,3 +299,55 @@ kubectl apply -f k8s/deployment-v3.yaml
 kubectl get pods
 
 ```
+
+### 10.- Agregar variables de entorno al Deployment
+
+Definir las variables en k8s/configmap.yaml
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+    APP_NAME : "production"
+    APP_ENV : "kubernetes"
+    APP_VERSION : "3.0"
+```
+Crear un nuevo deployment considerando las nuevas variables  en k8s/deployment-v4.yaml
+```
+....
+          # Definir variables de entorno desde ConfigMap
+          env:
+            - name: APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_NAME
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_ENV
+            - name: APP_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_VERSION
+                  
+...
+```
+
+```
+mvn  clean package -DskipTests
+
+docker build -t app-k8s-local:4.0 .
+
+kubectl apply -f k8s/configmap.yaml
+
+kubectl apply -f k8s/deployment-v4.yaml
+
+kubectl get pods
+
+```
+
+- Probar en el navegador: http://localhost:8080
