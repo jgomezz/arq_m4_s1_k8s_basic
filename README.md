@@ -71,3 +71,19 @@ spec:
           ports:
             - containerPort: 8080
 ```
+
+Desplegar el POD en Kubernetes
+
+```
+kubectl apply -f k8s/deployment-v1.yaml
+```
+Ver los Pods corriendo
+
+```
+kubectl get pods
+```
+Ver los logs del POD
+
+``` 
+kubectl logs -f <NOMBRE_DEL_POD>
+``` 
