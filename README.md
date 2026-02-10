@@ -182,6 +182,120 @@ kubectl get pods
 kubectl delete pod <NOMBRE_DEL_POD>
 kubectl get pods
 ```
+### 9.- Agregar Health Check al Deployment
+
+Modificar el Controller
+```
+package pe.edu.tecsup.app.controllers;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+@RestController
+public class K8sController {
+
+    private boolean estadoSalud = true;
+
+    private int contador = 0;
+
+    @GetMapping("/")
+    public String hello() throws UnknownHostException {
+
+        contador++;
+        String hostname = InetAddress.getLocalHost().getHostName();
+
+        return String.format("Versión 1 => Pod = %s , Visitas = %d  ", hostname, contador);
+    }
+
+    /**
+     *  Liveness: Indica si la aplicación está viva o no. Si el endpoint devuelve un estado de éxito (por ejemplo, HTTP 200), Kubernetes considerará que el contenedor está vivo. Si devuelve un error (por ejemplo, HTTP 500), Kubernetes considerará que el contenedor no está vivo y lo reiniciará.
+     * @return
+     */
+    @GetMapping("/health/liveness")
+    public String liveness() {
+        return "OK";
+    }
+
+    /**
+     *  Readiness: Indica si la aplicación está lista para recibir tráfico. Si el endpoint devuelve un estado de éxito, Kubernetes considerará que el contenedor está listo y comenzará a enviar tráfico a él. Si devuelve un error, Kubernetes considerará que el contenedor no está listo y no enviará tráfico a él hasta que esté listo.
+     * @return
+     */
+     @GetMapping("/health/readiness")
+     public String readiness() {
+         if(estadoSalud) {
+             return "OK";
+         }
+         throw  new RuntimeException("No estoy listo");
+     }
+
+     @GetMapping("/health/switch")
+     public String switchHealth() {
+         estadoSalud = !estadoSalud;
+         return "Estado de salud cambiado a: " + (estadoSalud ? "OK" : "NOT OK");
+     }
 
 
+}
 
+
+```
+
+Volver a generar el docker con la nueva versión de la app
+
+```bash
+mvn  clean package -DskipTests
+
+docker build -t app-k8s-local:3.0 .
+
+```
+Desplegar el nuevo Deployment
+
+k8s/deployment-v3.yaml
+
+```
+apiVersion: apps/v1
+kind: Deployment  # Tipo de recurso: Deployment
+metadata:
+  name: app-k8s
+spec:
+  replicas: 3                     # Solo 3 pod por ahora
+  selector:
+    matchLabels:
+      app: app-k8s
+  template:
+    metadata:
+      labels:
+        app: app-k8s
+    spec:
+      containers:
+        - name: app-k8s
+          image: app-k8s-local:3.0
+          imagePullPolicy: Never     # Usar imagen local
+          ports:
+            - containerPort: 8080
+
+          # Health checks
+          livenessProbe: ## Verifica si el contenedor está vivo
+            httpGet:
+              path: /health/liveness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+          readinessProbe: ## Verifica si el contenedor está listo para recibir tráfico
+            httpGet:
+              path: /health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+```
+
+```
+kubectl apply -f k8s/deployment-v3.yaml
+
+kubectl get pods
+
+```

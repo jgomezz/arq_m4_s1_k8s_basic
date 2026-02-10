@@ -9,6 +9,8 @@ import java.net.UnknownHostException;
 @RestController
 public class K8sController {
 
+    private boolean estadoSalud = true;
+
     private int contador = 0;
 
     @GetMapping("/")
@@ -19,5 +21,33 @@ public class K8sController {
 
         return String.format("Versión 1 => Pod = %s , Visitas = %d  ", hostname, contador);
     }
+
+    /**
+     *  Liveness: Indica si la aplicación está viva o no. Si el endpoint devuelve un estado de éxito (por ejemplo, HTTP 200), Kubernetes considerará que el contenedor está vivo. Si devuelve un error (por ejemplo, HTTP 500), Kubernetes considerará que el contenedor no está vivo y lo reiniciará.
+     * @return
+     */
+    @GetMapping("/health/liveness")
+    public String liveness() {
+        return "OK";
+    }
+
+    /**
+     *  Readiness: Indica si la aplicación está lista para recibir tráfico. Si el endpoint devuelve un estado de éxito, Kubernetes considerará que el contenedor está listo y comenzará a enviar tráfico a él. Si devuelve un error, Kubernetes considerará que el contenedor no está listo y no enviará tráfico a él hasta que esté listo.
+     * @return
+     */
+     @GetMapping("/health/readiness")
+     public String readiness() {
+         if(estadoSalud) {
+             return "OK";
+         }
+         throw  new RuntimeException("No estoy listo");
+     }
+
+     @GetMapping("/health/switch")
+     public String switchHealth() {
+         estadoSalud = !estadoSalud;
+         return "Estado de salud cambiado a: " + (estadoSalud ? "OK" : "NOT OK");
+     }
+
 
 }
