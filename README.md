@@ -115,7 +115,7 @@ kubectl get services
 ```
 Probar en el navegador: http://localhost:30080
 
-## Aumentar la cantidad de replicas
+### 9.- Aumentar la cantidad de replicas
 
 Modificar el Controller
 
