@@ -300,7 +300,7 @@ kubectl get pods
 
 ```
 
-### 10.- Agregar variables de entorno al Deployment
+### 10.- Agregar variables con ConfigMap
 
 Definir las variables en k8s/configmap.yaml
 ```
@@ -337,6 +337,32 @@ Crear un nuevo deployment considerando las nuevas variables  en k8s/deployment-v
 ...
 ```
 
+Modificar el Controller para mostrar las nuevas variables
+```
+    // Leer variables 
+
+    @Value("${APP_NAME:default}")
+    private String appName;
+
+    @Value("${APP_ENV:default}")
+    private String appEnv;
+
+    @Value("${APP_VERSION:default}")
+    private String appVersion;
+
+    @GetMapping("/")
+    public String hello() throws UnknownHostException {
+
+        contador++;
+        String hostname = InetAddress.getLocalHost().getHostName();
+
+        return String.format("Versión 1 => Pod = %s , Visitas = %d , Nombre = %s, Env=%s, Ver =%s "
+                , hostname, contador, appName, appEnv, appVersion);
+    }
+
+```
+
+
 ```
 mvn  clean package -DskipTests
 
@@ -351,3 +377,80 @@ kubectl get pods
 ```
 
 - Probar en el navegador: http://localhost:30080
+
+
+### 11.- Agregar datos sensibles con Secret
+
+Definir las variables sensibles en k8s/secret.yaml
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+type: Opaque
+stringData:
+    DB_USER : "admin"
+    DB_PASSWORD : "T3csup21"
+
+```
+Crear un nuevo deployment considerando las nuevas variables  en k8s/deployment-v5.yaml
+```
+....
+          # Definir variables de entorno desde Secret
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_PASSWORD  
+...
+```
+
+Modificar el Controller para mostrar las variables sensibles
+```
+    // Value Secret
+
+    @Value("${DB_USER:default}")
+    private String dbUser;
+
+    @Value("${DB_PASSWORD:default}")
+    private String dbPwd;
+
+    @GetMapping("/")
+    public String hello() throws UnknownHostException {
+
+        contador++;
+        String hostname = InetAddress.getLocalHost().getHostName();
+
+        return String.format("Versión 1 => Pod = %s , Visitas = %d , Nombre = %s, Env=%s, Ver =%s, UserDB=%s, PassDB=%s"
+                , hostname, contador, appName, appEnv, appVersion, dbUser, dbPwd);
+    }
+
+
+```
+
+
+```
+mvn  clean package -DskipTests
+
+docker build -t app-k8s-local:5.0 .
+
+kubectl apply -f k8s/secret.yaml
+
+kubectl apply -f k8s/deployment-v5.yaml
+
+kubectl get pods
+
+```
+
+- Probar
+
+```
+curl http://localhost:30080    
+
+```
+
