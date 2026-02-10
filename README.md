@@ -87,3 +87,33 @@ Ver los logs del POD
 ``` 
 kubectl logs -f <NOMBRE_DEL_POD>
 ``` 
+
+### 8.- Exponer el POD con un Service
+- Crear el archivo de configuración del Service ( k8s/service-v1.yaml)
+
+``` 
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-service
+spec:
+  type: NodePort
+  selector:
+    app: app-k8s                  # Conecta con pods que tengan esta etiqueta
+  ports:
+    - port: 80                      # Puerto del Service
+      targetPort: 8080              # Puerto del contenedor
+      nodePort: 30080               # Puerto en localhost
+```
+Desplegar el Service en Kubernetes
+```
+kubectl apply -f k8s/service-v1.yaml
+```
+Ver los Services corriendo
+```
+kubectl get services
+```
+Probar en el navegador: http://localhost:30080
+
+
+
