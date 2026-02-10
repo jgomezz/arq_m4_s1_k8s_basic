@@ -139,7 +139,7 @@ public class K8sController {
         contador++;
         String hostname = InetAddress.getLocalHost().getHostName();
         
-        return String.format("Versión 1 => Pod = %s , Visitas = %s  ", hostname, contador);
+        return String.format("Versión 1 => Pod = %s , Visitas = %d  ", hostname, contador);
     }
 
 }
