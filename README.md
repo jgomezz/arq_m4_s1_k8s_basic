@@ -115,5 +115,62 @@ kubectl get services
 ```
 Probar en el navegador: http://localhost:30080
 
+## Aumentar la cantidad de replicas
 
+Modificar el Controller
 
+```
+package pe.edu.tecsup.app.controllers;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+@RestController
+public class K8sController {
+
+    private int contador = 0;
+
+    @GetMapping("/")
+    public String hello() throws UnknownHostException {
+
+        contador++;
+        String hostname = InetAddress.getLocalHost().getHostName();
+        
+        return String.format("Versión 1 => Pod = %s , Visitas = %s  ", hostname, contador);
+    }
+
+}
+```
+Volver a generar el docker con la nueva versión de la app
+
+```bash
+mvn  clean package -DskipTests
+
+docker build -t app-k8s-local:2.0 .
+
+```
+
+Crear un nuevo Deployment modificando el archivo k8s/deployment-v2.yaml
+
+```
+spec:
+replicas: 3                     # Solo 1 pod por ahora
+```
+
+Desplegar el nuevo Deployment
+
+```
+kubectl apply -f k8s/deployment-v2.yaml
+
+kubectl get pods
+
+```
+
+Realizar varias peticiones
+
+```
+for i in {1..20}; do curl http://localhost:30080; echo ""; done
+```
