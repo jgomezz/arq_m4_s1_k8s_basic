@@ -41,7 +41,7 @@ docker build -t app-k8s-local:1.0 .
 ```bash
 docker run -p 8080:8080 app-k8s-local:1.0
 ```
-- Probar en el navegador: http://localhost:8080
+- Probar en el navegador: http://localhost:30080
 
 
 ## KUBERNETES
@@ -350,4 +350,4 @@ kubectl get pods
 
 ```
 
-- Probar en el navegador: http://localhost:8080
+- Probar en el navegador: http://localhost:30080
