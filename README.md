@@ -174,3 +174,14 @@ Realizar varias peticiones
 ```
 for i in {1..20}; do curl http://localhost:30080; echo ""; done
 ```
+
+Pruebas : Eliminar un POD y ver como se vuelve a recrear
+
+```
+kubectl get pods    
+kubectl delete pod <NOMBRE_DEL_POD>
+kubectl get pods
+```
+
+
+
