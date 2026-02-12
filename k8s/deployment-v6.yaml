@@ -19,6 +19,14 @@ spec:
           ports:
             - containerPort: 8080
 
+          resources:
+            requests:                 # Lo que PIDE (para scheduling)
+              memory: "128Mi"
+              cpu: "100m"             # 0.1 CPU
+            limits:                   # Lo que MÁXIMO puede usar
+              memory: "256Mi"
+              cpu: "200m"             # 0.2 CPU
+
           # Definir variables de entorno desde ConfigMap
           env:
             - name: APP_NAME

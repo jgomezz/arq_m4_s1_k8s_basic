@@ -454,3 +454,44 @@ curl http://localhost:30080
 
 ```
 
+### 12.- Recursos y Limites
+
+- Aplicar
+```
+kubectl apply -f k8s/deployment-v6.yaml
+
+# Ver recursos usados
+kubectl top pods
+# (Si no funciona, instala metrics-server)
+
+```
+
+- Procedimiento para instalar el metrics-server
+```
+# Descargar el archivo
+curl -L https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml -o k8s/metrics-server.yaml
+
+# Editar el deployment para agregar el flag
+# Busca la sección 'args:' y agrega:
+#   - --kubelet-insecure-tls
+
+# Aplicar el archivo modificado
+kubectl apply -f k8s/metrics-server.yaml
+```
+### 13.- Scalling Manual
+
+- Escalar manualmente
+```
+# Escalar a 5 réplicas
+kubectl scale deployment app-k8s --replicas=3
+
+# Ver pods
+kubectl get pods
+
+# Escalar a 2
+kubectl scale deployment app-k8s --replicas=2
+
+# Ver cómo se terminan los pods
+kubectl get pods -w
+
+```
