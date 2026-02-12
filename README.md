@@ -495,3 +495,16 @@ kubectl scale deployment app-k8s --replicas=2
 kubectl get pods -w
 
 ```
+### 14.- Liberar recursos
+```
+kubectl delete -f k8s/service-v1.yaml
+kubectl delete -f k8s/deployment-v1.yaml
+kubectl delete -f k8s/deployment-v2.yaml
+kubectl delete -f k8s/deployment-v3.yaml    
+kubectl delete -f k8s/deployment-v4.yaml
+kubectl delete -f k8s/deployment-v5.yaml
+kubectl delete -f k8s/deployment-v6.yaml
+kubectl delete -f k8s/configmap.yaml
+kubectl delete -f k8s/secret.yaml
+    
+```
