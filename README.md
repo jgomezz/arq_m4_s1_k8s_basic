@@ -67,7 +67,9 @@ spec:
       containers:
         - name: app-k8s
           image: app-k8s-local:1.0
-          imagePullPolicy: Never     # Usar imagen local
+          # En caso no  encuentre la imagen , cambiar con IfNotPresent
+          imagePullPolicy: Never           #     # Usar imagen del nodo
+          ## imagePullPolicy: IfNotPresent #     # Si no existe la imagen en el nodo la descarga
           ports:
             - containerPort: 8080
 ```
