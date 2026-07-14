@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment  # Tipo de recurso: Deployment
+metadata:
+  name: app-k8s
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-k8s
+  template:
+    metadata:
+      labels:
+        app: app-k8s
+    spec:
+      containers:
+        - name: app-k8s
+          image: app-k8s-local:2.0
+          # En caso no  encuentre la imagen , cambiar con IfNotPresent
+          imagePullPolicy: Never           #     # Usar imagen del nodo
+          ## imagePullPolicy: IfNotPresent #     # Si no existe la imagen en el nodo la descarga
+
+          ports:
+            - containerPort: 8080
