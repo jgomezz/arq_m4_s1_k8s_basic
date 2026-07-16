@@ -1,5 +1,6 @@
 package pe.edu.tecsup.app.controllers;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,9 +10,22 @@ import java.net.UnknownHostException;
 @RestController
 public class K8sController {
 
+    // Leer variables
+
+    @Value("${APP_NAME:default}")
+    private String appName;
+
+    @Value("${APP_ENV:default}")
+    private String appEnv;
+
+    @Value("${APP_VERSION:default}")
+    private String appVersion;
+
     private boolean estadoSalud = true;
 
     private int contador = 0;
+
+
 
     @GetMapping("/")
     public String hello() throws UnknownHostException {
@@ -19,7 +33,8 @@ public class K8sController {
         contador++;
         String hostname = InetAddress.getLocalHost().getHostName();
 
-        return String.format("Versión 1 => Pod = %s , Visitas = %d  ", hostname, contador);
+        return String.format("Versión 1 => Pod = %s , Visitas = %d , Nombre = %s, Env=%s, Ver =%s "
+                , hostname, contador, appName, appEnv, appVersion);
     }
 
     /**

@@ -323,7 +323,12 @@ data:
 ```
 Crear un nuevo deployment considerando las nuevas variables  en k8s/deployment-v4.yaml
 ```
-....
+          ....
+          ....
+          ....
+          ports:
+            - containerPort: 8080
+            
           # Definir variables de entorno desde ConfigMap
           env:
             - name: APP_NAME
@@ -341,8 +346,18 @@ Crear un nuevo deployment considerando las nuevas variables  en k8s/deployment-v
                 configMapKeyRef:
                   name: app-config
                   key: APP_VERSION
-                  
-...
+              
+          # Health checks
+          livenessProbe: ## Verifica si el contenedor está vivo
+            httpGet:
+              path: /health/liveness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+                
+          ....
+          ....
+
 ```
 
 Modificar el Controller para mostrar las nuevas variables
