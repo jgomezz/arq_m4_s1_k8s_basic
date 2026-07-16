@@ -26,6 +26,13 @@ public class K8sController {
     private int contador = 0;
 
 
+    // Value Secret
+
+    @Value("${DB_USER:default}")
+    private String dbUser;
+
+    @Value("${DB_PASSWORD:default}")
+    private String dbPwd;
 
     @GetMapping("/")
     public String hello() throws UnknownHostException {
@@ -33,9 +40,10 @@ public class K8sController {
         contador++;
         String hostname = InetAddress.getLocalHost().getHostName();
 
-        return String.format("Versión 1 => Pod = %s , Visitas = %d , Nombre = %s, Env=%s, Ver =%s "
-                , hostname, contador, appName, appEnv, appVersion);
+        return String.format("Versión 1 => Pod = %s , Visitas = %d , Nombre = %s, Env=%s, Ver =%s, UserDB=%s, PassDB=%s"
+                , hostname, contador, appName, appEnv, appVersion, dbUser, dbPwd);
     }
+
 
     /**
      *  Indica si la aplicación está viva o no
