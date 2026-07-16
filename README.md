@@ -300,6 +300,12 @@ kubectl apply -f k8s/deployment-v3.yaml
 
 kubectl get pods
 
+# Camiar el estado de salud 
+kubectl exec -it <NOMBRE_POD>  --  wget -qO- http://localhost:8080//health/switch
+
+# Ingresar a la consola del POD
+kubectl exec -it <NOMBRE_POD>  -- /bin/sh
+
 ```
 
 ### 10.- Agregar variables con ConfigMap
